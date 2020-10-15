@@ -5,15 +5,15 @@ import * as fs from 'fs'
 import {JsonEditor} from '../src/JsonEditor'
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test('set connection string in completely empty appsettings.json file', () => {
+test('set single level value in completely empty appsettings.json file', () => {
   var pathToTempConfigFile = createCopyOfSampleFile(
     'completely-empty-sample-appsettings.json'
   )
 
-  const expectedConnectionStringName = 'dingdong'
-  process.env['INPUT_NAME'] = expectedConnectionStringName
-  const expectedConnectionStringValue = 'bing bong'
-  process.env['INPUT_CONNECTIONSTRING'] = expectedConnectionStringValue
+  const expectedKeyForLevel1 = 'dingdong'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedValueToSet = 'bing bong'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
   process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
   process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
 
@@ -24,8 +24,8 @@ test('set connection string in completely empty appsettings.json file', () => {
 
   assertConnectionStringValueIsNot(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
@@ -33,8 +33,8 @@ test('set connection string in completely empty appsettings.json file', () => {
 
   assertConnectionStringValue(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 })
 
@@ -43,10 +43,10 @@ test('set connection string in empty json appsettings.json file', () => {
     'empty-json-sample-appsettings.json'
   )
 
-  const expectedConnectionStringName = 'dingdong'
-  process.env['INPUT_NAME'] = expectedConnectionStringName
-  const expectedConnectionStringValue = 'bing bong'
-  process.env['INPUT_CONNECTIONSTRING'] = expectedConnectionStringValue
+  const expectedKeyForLevel1 = 'dingdong'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedValueToSet = 'bing bong'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
   process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
   process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
 
@@ -57,8 +57,8 @@ test('set connection string in empty json appsettings.json file', () => {
 
   assertConnectionStringValueIsNot(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
@@ -66,8 +66,8 @@ test('set connection string in empty json appsettings.json file', () => {
 
   assertConnectionStringValue(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 })
 
@@ -76,10 +76,10 @@ test('set new connection string in an appsettings.json file with existing connec
     'sample-appsettings-with-connection-strings.json'
   )
 
-  const expectedConnectionStringName = 'dingdong'
-  process.env['INPUT_NAME'] = expectedConnectionStringName
-  const expectedConnectionStringValue = 'bing bong'
-  process.env['INPUT_CONNECTIONSTRING'] = expectedConnectionStringValue
+  const expectedKeyForLevel1 = 'dingdong'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedValueToSet = 'bing bong'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
   process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
   process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
 
@@ -90,8 +90,8 @@ test('set new connection string in an appsettings.json file with existing connec
 
   assertConnectionStringValueIsNot(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
@@ -99,8 +99,8 @@ test('set new connection string in an appsettings.json file with existing connec
 
   assertConnectionStringValue(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
   assertConnectionStringValue(
     pathToTempConfigFile,
@@ -119,10 +119,10 @@ test('modify existing connection string in an appsettings.json file', () => {
     'sample-appsettings-with-connection-strings.json'
   )
 
-  const expectedConnectionStringName = 'connstr1'
-  process.env['INPUT_NAME'] = expectedConnectionStringName
-  const expectedConnectionStringValue = 'connstr1 new value'
-  process.env['INPUT_CONNECTIONSTRING'] = expectedConnectionStringValue
+  const expectedKeyForLevel1 = 'connstr1'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedValueToSet = 'connstr1 new value'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
   process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
   process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
 
@@ -133,8 +133,8 @@ test('modify existing connection string in an appsettings.json file', () => {
 
   assertConnectionStringValueIsNot(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
@@ -142,34 +142,34 @@ test('modify existing connection string in an appsettings.json file', () => {
 
   assertConnectionStringValue(
     pathToTempConfigFile,
-    expectedConnectionStringName,
-    expectedConnectionStringValue
+    expectedKeyForLevel1,
+    expectedValueToSet
   )
 })
 
 function assertConnectionStringValue(
   pathToTempConfigFile: string,
-  expectedConnectionStringName: string,
-  expectedConnectionStringValue: string
+  expectedKeyForLevel1: string,
+  expectedValueToSet: string
 ) {
   const editor = new JsonEditor()
   editor.open(pathToTempConfigFile)
 
-  expect(editor.getConnectionString(expectedConnectionStringName)).toBe(
-    expectedConnectionStringValue
+  expect(editor.getConnectionString(expectedKeyForLevel1)).toBe(
+    expectedValueToSet
   )
 }
 
 function assertConnectionStringValueIsNot(
   pathToTempConfigFile: string,
-  expectedConnectionStringName: string,
-  expectedConnectionStringValue: string
+  expectedKeyForLevel1: string,
+  expectedValueToSet: string
 ) {
   const editor = new JsonEditor()
   editor.open(pathToTempConfigFile)
 
-  expect(editor.getConnectionString(expectedConnectionStringName)).not.toBe(
-    expectedConnectionStringValue
+  expect(editor.getConnectionString(expectedKeyForLevel1)).not.toBe(
+    expectedValueToSet
   )
 }
 

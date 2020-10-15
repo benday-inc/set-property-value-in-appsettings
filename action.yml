@@ -1,19 +1,26 @@
-name: 'Edit .net core database connection string in appsettings.json'
-description: 'Edit a connection string for .NET Core in appsettings.json'
+name: 'Edit property string value in appsettings.json'
+description: 'Edit property string value in appsettings.json'
 author: 'Benjamin Day Consulting, Inc.'
 inputs:
-  name:
+  pathToSettingsFile:
     required: true
-    description: 'name of the connection string'
-    default: 'default'
-  connectionString:
+    description: 'Path to the json file to edit (appsettings.json)'
+    default: 'appsettings.json'
+  keyname1:
+    required: true
+    description: 'The name of the first level property in the json hierarchy.'
+  keyname2:
+    required: false
+    description: '[optional] The name of the second level property in the json hierarchy.'
+    default: null
+  keyname3:
+    required: false
+    description: '[optional] The name of the third level property in the json hierarchy.'
+    default: null
+  valueToSet:
     required: true
     description: 'value for the connection string'
     default: ''
-  pathToSettingsFile:
-    required: true
-    description: 'path to your appsettings.json file'
-    default: 'appsettings.json'
 runs:
   using: 'node12'
   main: 'dist/index.js'

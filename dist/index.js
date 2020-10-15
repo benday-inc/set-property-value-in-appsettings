@@ -36,17 +36,17 @@ class JsonEditor {
     }
     open(filename) {
         try {
-            core.debug('opening file...');
-            const contents = fs.readFileSync(filename, 'utf8');
-            core.debug('file opened.');
+            core.debug("opening file...");
+            const contents = fs.readFileSync(filename, "utf8");
+            core.debug("file opened.");
             this.Contents = contents;
             if (contents.trim().length === 0) {
-                this.Contents = '{}';
+                this.Contents = "{}";
             }
             this.PathToFile = filename;
-            core.debug('Parsing json...');
-            this.ContentsAsJson = JSON.parse(this.Contents.replace(/^\uFEFF/, ''));
-            core.debug('Json parse complete.');
+            core.debug("Parsing json...");
+            this.ContentsAsJson = JSON.parse(this.Contents.replace(/^\uFEFF/, ""));
+            core.debug("Json parse complete.");
         }
         catch (error) {
             core.debug(error);
@@ -54,13 +54,13 @@ class JsonEditor {
         }
     }
     save(filename) {
-        fs.writeFileSync(filename, JSON.stringify(this.ContentsAsJson), 'utf8');
+        fs.writeFileSync(filename, JSON.stringify(this.ContentsAsJson), "utf8");
     }
     getConnectionString(key) {
-        return this.getValue('ConnectionStrings', key);
+        return this.getValue("ConnectionStrings", key);
     }
     setConnectionString(key, value) {
-        this.setValue(value, 'ConnectionStrings', key);
+        this.setValue(value, "ConnectionStrings", key);
     }
     getValue(key1, key2 = null, key3 = null) {
         if (this.ContentsAsJson === null) {
@@ -171,24 +171,30 @@ function run() {
         try {
             // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
             core.debug(`Reading inputs...`);
-            const name = core.getInput('name');
+            const name = core.getInput("name");
             core.debug(`Connection string name: ${name} ...`);
-            const pathToSettingsFile = core.getInput('PATHTOSETTINGSFILE'.toLowerCase());
+            const pathToSettingsFile = core.getInput("PATHTOSETTINGSFILE".toLowerCase());
             core.debug(`Settings file: ${pathToSettingsFile} ...`);
-            const connStringValue = core.getInput('connectionstring');
-            core.debug(`Connection string value: ${connStringValue} ...`);
-            core.debug('Creating instance of json editor...');
+            const valueToSet = core.getInput("valuetoset");
+            core.debug(`Value to set: ${valueToSet} ...`);
+            const keyname1 = core.getInput("keyname1");
+            core.debug(`key name 1: ${keyname1} ...`);
+            const keyname2 = core.getInput("keyname2");
+            core.debug(`key name 2: ${keyname2} ...`);
+            const keyname3 = core.getInput("keyname3");
+            core.debug(`key name 3: ${keyname3} ...`);
+            core.debug("Creating instance of json editor...");
             const editor = new JsonEditor_1.JsonEditor();
-            core.debug('Json editor created.');
-            core.debug('Opening file...');
+            core.debug("Json editor created.");
+            core.debug("Opening file...");
             editor.open(pathToSettingsFile);
-            core.debug('File opened.');
-            core.debug('Setting connection string value...');
-            editor.setConnectionString(name, connStringValue);
-            core.debug('Connection string value set.');
-            core.debug('Saving changes...');
+            core.debug("File opened.");
+            core.debug("Setting property value value...");
+            editor.setValue(valueToSet, keyname1, keyname2, keyname3);
+            core.debug("Property value set.");
+            core.debug("Saving changes...");
             editor.save(pathToSettingsFile);
-            core.debug('Changes saved.');
+            core.debug("Changes saved.");
         }
         catch (error) {
             core.setFailed(error.message);
