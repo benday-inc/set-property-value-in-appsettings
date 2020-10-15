@@ -1,0 +1,1 @@
+{"ConnectionStrings":{"connstr1":"connstr1 new value","connstr2":"connstr2 value"},"Logging":{"LogLevel":{"Default":"Information","Microsoft":"Warning","Microsoft.Hosting.Lifetime":"Information"}},"IdentityServer":{"Clients":{"Benday.CodeGenerator.WebApi":{"Profile":"IdentityServerSPA"}}},"AllowedHosts":"*"}
