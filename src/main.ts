@@ -21,10 +21,20 @@ async function run(): Promise<void> {
     const keyname1: string = core.getInput('keyname1')
     core.debug(`key name 1: ${keyname1} ...`)
 
-    const keyname2: string = core.getInput('keyname2')
+    let keyname2: string = core.getInput('keyname2')
+
+    if (keyname2 === '') {
+      keyname2 = null
+    }
+
     core.debug(`key name 2: ${keyname2} ...`)
 
-    const keyname3: string = core.getInput('keyname3')
+    let keyname3: string = core.getInput('keyname3')
+
+    if (keyname3 === '') {
+      keyname3 = null
+    }
+
     core.debug(`key name 3: ${keyname3} ...`)
 
     core.debug('Creating instance of json editor...')

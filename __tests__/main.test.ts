@@ -22,20 +22,22 @@ test('set single level value in completely empty appsettings.json file', () => {
     env: process.env
   }
 
-  assertConnectionStringValueIsNot(
+  assertValueIsNot(
     pathToTempConfigFile,
     expectedKeyForLevel1,
     expectedValueToSet
   )
 
+  console.log('end of arrange')
+
+  console.log('start of act')
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
   console.log(temp)
+  console.log('end of act')
 
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    expectedKeyForLevel1,
-    expectedValueToSet
-  )
+  console.log('start of assert')
+  assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
+  console.log('end of assert')
 })
 
 test('set connection string in empty json appsettings.json file', () => {
@@ -55,7 +57,7 @@ test('set connection string in empty json appsettings.json file', () => {
     env: process.env
   }
 
-  assertConnectionStringValueIsNot(
+  assertValueIsNot(
     pathToTempConfigFile,
     expectedKeyForLevel1,
     expectedValueToSet
@@ -64,11 +66,7 @@ test('set connection string in empty json appsettings.json file', () => {
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
   console.log(temp)
 
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    expectedKeyForLevel1,
-    expectedValueToSet
-  )
+  assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
 })
 
 test('set new connection string in an appsettings.json file with existing connection strings', () => {
@@ -88,7 +86,7 @@ test('set new connection string in an appsettings.json file with existing connec
     env: process.env
   }
 
-  assertConnectionStringValueIsNot(
+  assertValueIsNot(
     pathToTempConfigFile,
     expectedKeyForLevel1,
     expectedValueToSet
@@ -97,21 +95,9 @@ test('set new connection string in an appsettings.json file with existing connec
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
   console.log(temp)
 
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    expectedKeyForLevel1,
-    expectedValueToSet
-  )
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    'connstr1',
-    'connstr1 value'
-  )
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    'connstr2',
-    'connstr2 value'
-  )
+  assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
+  assertValue(pathToTempConfigFile, 'connstr1', 'connstr1 value')
+  assertValue(pathToTempConfigFile, 'connstr2', 'connstr2 value')
 })
 
 test('modify existing connection string in an appsettings.json file', () => {
@@ -131,7 +117,7 @@ test('modify existing connection string in an appsettings.json file', () => {
     env: process.env
   }
 
-  assertConnectionStringValueIsNot(
+  assertValueIsNot(
     pathToTempConfigFile,
     expectedKeyForLevel1,
     expectedValueToSet
@@ -140,14 +126,10 @@ test('modify existing connection string in an appsettings.json file', () => {
   let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
   console.log(temp)
 
-  assertConnectionStringValue(
-    pathToTempConfigFile,
-    expectedKeyForLevel1,
-    expectedValueToSet
-  )
+  assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
 })
 
-function assertConnectionStringValue(
+function assertValue(
   pathToTempConfigFile: string,
   expectedKeyForLevel1: string,
   expectedValueToSet: string
@@ -155,22 +137,23 @@ function assertConnectionStringValue(
   const editor = new JsonEditor()
   editor.open(pathToTempConfigFile)
 
-  expect(editor.getConnectionString(expectedKeyForLevel1)).toBe(
-    expectedValueToSet
-  )
+  const actual = editor.getValue(expectedKeyForLevel1)
+
+  expect(actual).toBe(expectedValueToSet)
 }
 
-function assertConnectionStringValueIsNot(
+function assertValueIsNot(
   pathToTempConfigFile: string,
   expectedKeyForLevel1: string,
   expectedValueToSet: string
 ) {
   const editor = new JsonEditor()
+
   editor.open(pathToTempConfigFile)
 
-  expect(editor.getConnectionString(expectedKeyForLevel1)).not.toBe(
-    expectedValueToSet
-  )
+  const actual = editor.getValue(expectedKeyForLevel1)
+
+  expect(actual).not.toBe(expectedValueToSet)
 }
 
 function createCopyOfSampleFile(sampleFilename: string) {
