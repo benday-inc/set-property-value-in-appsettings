@@ -17,7 +17,8 @@
         }
       }
     },
-  "AllowedHosts": "*"
+  "AllowedHosts": "*",
+  "level1": "level 1 value"
   }
   
   

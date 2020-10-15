@@ -69,12 +69,12 @@ test('set connection string in empty json appsettings.json file', () => {
   assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
 })
 
-test('set new connection string in an appsettings.json file with existing connection strings', () => {
+test('set new connection string in an appsettings.json file with existing level 1 value', () => {
   var pathToTempConfigFile = createCopyOfSampleFile(
     'sample-appsettings-with-connection-strings.json'
   )
 
-  const expectedKeyForLevel1 = 'dingdong'
+  const expectedKeyForLevel1 = 'level1'
   process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
   const expectedValueToSet = 'bing bong'
   process.env['INPUT_VALUETOSET'] = expectedValueToSet
@@ -96,8 +96,6 @@ test('set new connection string in an appsettings.json file with existing connec
   console.log(temp)
 
   assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
-  assertValue(pathToTempConfigFile, 'connstr1', 'connstr1 value')
-  assertValue(pathToTempConfigFile, 'connstr2', 'connstr2 value')
 })
 
 test('modify existing connection string in an appsettings.json file', () => {
