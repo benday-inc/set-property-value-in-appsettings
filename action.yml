@@ -1,5 +1,5 @@
-name: 'Edit property string value in appsettings.json'
-description: 'Edit property string value in appsettings.json'
+name: 'Edit property string value in a json file'
+description: 'Edit property string value in a json file (ex. appsettings.json)'
 author: 'Benjamin Day Consulting, Inc.'
 inputs:
   pathToSettingsFile:
