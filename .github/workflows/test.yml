@@ -1,0 +1,33 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  build: # make sure build/ci work properly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          npm install
+      - run: |
+          npm run all
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run an ls -l
+        run: ls -lR
+        working-directory: '${{ github.workspace }}'
+      - uses: ./
+        with:
+          keyname1: 'keylevel1'
+          keyname2: 'keylevel2'
+          keyname3: 'keylevel3'
+          valuetoset: 'asdf asdf'
+          pathtosettingsfile: '${{ github.workspace }}/__tests__/empty-json-sample-appsettings.json'
+
+        
