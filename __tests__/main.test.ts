@@ -3,6 +3,7 @@ import * as cp from 'child_process'
 import * as path from 'path'
 import * as fs from 'fs'
 import {JsonEditor} from '../src/JsonEditor'
+import {countReset} from 'console'
 
 // shows how the runner will run a javascript action with env / stdout protocol
 test('set single level value in completely empty appsettings.json file', () => {
@@ -98,14 +99,14 @@ test('set new connection string in an appsettings.json file with existing level 
   assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
 })
 
-test('modify existing connection string in an appsettings.json file', () => {
+test('modify existing level1 property in an appsettings.json file', () => {
   var pathToTempConfigFile = createCopyOfSampleFile(
     'sample-appsettings-with-connection-strings.json'
   )
 
-  const expectedKeyForLevel1 = 'connstr1'
+  const expectedKeyForLevel1 = 'key1'
   process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
-  const expectedValueToSet = 'connstr1 new value'
+  const expectedValueToSet = 'new value'
   process.env['INPUT_VALUETOSET'] = expectedValueToSet
   process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
   process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
@@ -127,15 +128,113 @@ test('modify existing connection string in an appsettings.json file', () => {
   assertValue(pathToTempConfigFile, expectedKeyForLevel1, expectedValueToSet)
 })
 
+test('modify level2 property in an appsettings.json file', () => {
+  var pathToTempConfigFile = createCopyOfSampleFile(
+    'sample-appsettings-with-connection-strings.json'
+  )
+
+  const expectedKeyForLevel1 = 'key1'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedKeyForLevel2 = 'key2'
+  process.env['INPUT_KEYNAME2'] = expectedKeyForLevel2
+  const expectedValueToSet = 'new value'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
+  process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
+  process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
+
+  const systemUnderTest = path.join(__dirname, '..', 'lib', 'main.js')
+  const options: cp.ExecSyncOptions = {
+    env: process.env
+  }
+
+  assertValueIsNot(
+    pathToTempConfigFile,
+    expectedKeyForLevel1,
+    expectedValueToSet,
+    expectedKeyForLevel2
+  )
+
+  let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
+  console.log(temp)
+
+  assertValue(
+    pathToTempConfigFile,
+    expectedKeyForLevel1,
+    expectedValueToSet,
+    expectedKeyForLevel2
+  )
+})
+
+test('modify level3 property in an appsettings.json file', () => {
+  var pathToTempConfigFile = createCopyOfSampleFile(
+    'sample-appsettings-with-connection-strings.json'
+  )
+
+  const expectedKeyForLevel1 = 'key1'
+  process.env['INPUT_KEYNAME1'] = expectedKeyForLevel1
+  const expectedKeyForLevel2 = 'key2'
+  process.env['INPUT_KEYNAME2'] = expectedKeyForLevel2
+  const expectedKeyForLevel3 = 'key3'
+  process.env['INPUT_KEYNAME3'] = expectedKeyForLevel3
+  const expectedValueToSet = 'new value'
+  process.env['INPUT_VALUETOSET'] = expectedValueToSet
+  process.env['INPUT_PATHTOSETTINGSFILE'] = pathToTempConfigFile
+  process.env['ACTIONS_RUNNER_DEBUG'] = 'true'
+
+  const systemUnderTest = path.join(__dirname, '..', 'lib', 'main.js')
+  const options: cp.ExecSyncOptions = {
+    env: process.env
+  }
+
+  assertValueIsNot(
+    pathToTempConfigFile,
+    expectedKeyForLevel1,
+    expectedValueToSet,
+    expectedKeyForLevel2,
+    expectedKeyForLevel3
+  )
+
+  let temp = cp.execSync(`node ${systemUnderTest}`, options).toString()
+  console.log(temp)
+
+  assertValue(
+    pathToTempConfigFile,
+    expectedKeyForLevel1,
+    expectedValueToSet,
+    expectedKeyForLevel2,
+    expectedKeyForLevel3
+  )
+})
+
 function assertValue(
   pathToTempConfigFile: string,
   expectedKeyForLevel1: string,
-  expectedValueToSet: string
+  expectedValueToSet: string,
+  expectedKeyForLevel2: string = null,
+  expectedKeyForLevel3: string = null
 ) {
   const editor = new JsonEditor()
   editor.open(pathToTempConfigFile)
 
-  const actual = editor.getValue(expectedKeyForLevel1)
+  let actual: string = null
+
+  if (
+    expectedKeyForLevel3 === null &&
+    expectedKeyForLevel2 === null &&
+    expectedKeyForLevel1 === null
+  ) {
+    fail('no keys are set')
+  } else if (expectedKeyForLevel3 !== null && expectedKeyForLevel2 !== null) {
+    actual = editor.getValue(
+      expectedKeyForLevel1,
+      expectedKeyForLevel2,
+      expectedKeyForLevel3
+    )
+  } else if (expectedKeyForLevel2 !== null) {
+    actual = editor.getValue(expectedKeyForLevel1, expectedKeyForLevel2)
+  } else {
+    actual = editor.getValue(expectedKeyForLevel1)
+  }
 
   expect(actual).toBe(expectedValueToSet)
 }
@@ -143,13 +242,33 @@ function assertValue(
 function assertValueIsNot(
   pathToTempConfigFile: string,
   expectedKeyForLevel1: string,
-  expectedValueToSet: string
+  expectedValueToSet: string,
+  expectedKeyForLevel2: string = null,
+  expectedKeyForLevel3: string = null
 ) {
   const editor = new JsonEditor()
 
   editor.open(pathToTempConfigFile)
 
-  const actual = editor.getValue(expectedKeyForLevel1)
+  let actual: string = null
+
+  if (
+    expectedKeyForLevel3 === null &&
+    expectedKeyForLevel2 === null &&
+    expectedKeyForLevel1 === null
+  ) {
+    fail('no keys are set')
+  } else if (expectedKeyForLevel3 !== null && expectedKeyForLevel2 !== null) {
+    actual = editor.getValue(
+      expectedKeyForLevel1,
+      expectedKeyForLevel2,
+      expectedKeyForLevel3
+    )
+  } else if (expectedKeyForLevel2 !== null) {
+    actual = editor.getValue(expectedKeyForLevel1, expectedKeyForLevel2)
+  } else {
+    actual = editor.getValue(expectedKeyForLevel1)
+  }
 
   expect(actual).not.toBe(expectedValueToSet)
 }
@@ -172,5 +291,8 @@ function createCopyOfSampleFile(sampleFilename: string) {
   var pathToTempConfigFile = path.join(pathToTempDirForThisRun, sampleFilename)
 
   fs.copyFileSync(pathToFile, pathToTempConfigFile)
+
+  console.log('Created sample file at: ' + pathToTempConfigFile)
+
   return pathToTempConfigFile
 }
