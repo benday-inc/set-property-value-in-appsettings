@@ -1,4 +1,4 @@
-![build-test](https://github.com/benday/action-set-property-value-in-appsettings/workflows/build-test/badge.svg)
+![build-test](https://github.com/benday-inc/set-property-value-in-appsettings/workflows/build-test/badge.svg)
 
 # Edit a property value in JSON file
 
@@ -9,7 +9,7 @@ This action helps you to edit property values in a JSON file.  For example, if y
 To edit a connection string inside of an appsettings.json file:  
 ```yaml
 - name: Edit property string value in appsettings.json
-  uses: benday/action-set-property-value-in-appsettings@main
+  uses: benday-inc/set-property-value-in-appsettings@main
   with:
     pathtosettingsfile: '${{ github.workspace }}/Benday.Demo123/src/Benday.Demo123.WebUi/appsettings.json'
     keyname1: 'level1'
