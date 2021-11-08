@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {JsonEditor} from './JsonEditor'
+import {JsonEditor} from './json-editor'
 
 async function run(): Promise<void> {
   try {
@@ -53,7 +53,17 @@ async function run(): Promise<void> {
     editor.save(pathToSettingsFile)
     core.debug('Changes saved.')
   } catch (error) {
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      const err: Error = error
+
+      core.error(err)
+      core.setFailed(err)
+    } else {
+      core.error('Someting went wrong.')
+      core.error(JSON.stringify(error))
+      core.error(JSON.stringify(error))
+      core.setFailed(JSON.stringify(error))
+    }
   }
 }
 
