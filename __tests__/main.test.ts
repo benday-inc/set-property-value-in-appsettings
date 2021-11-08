@@ -2,7 +2,7 @@ import * as process from 'process'
 import * as cp from 'child_process'
 import * as path from 'path'
 import * as fs from 'fs'
-import {JsonEditor} from '../src/JsonEditor'
+import {JsonEditor} from '../src/json-editor'
 import {countReset} from 'console'
 
 // shows how the runner will run a javascript action with env / stdout protocol
