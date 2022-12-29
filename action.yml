@@ -22,7 +22,7 @@ inputs:
     description: 'value for the connection string'
     default: ''
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 branding:
   icon: 'settings'
