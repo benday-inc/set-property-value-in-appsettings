@@ -1,6 +1,6 @@
 {
   "name": "set-property-value-in-appsettings",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Set property string value in a json file (ex. appsettings.json)",
   "main": "lib/main.js",
