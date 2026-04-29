@@ -11,9 +11,9 @@ jobs:
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
           cache: 'npm'
@@ -22,7 +22,7 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: run an ls -l
         run: ls -lR
         working-directory: '${{ github.workspace }}'
@@ -40,7 +40,7 @@ jobs:
     if: github.base_ref == 'main' && github.actor == 'dependabot[bot]'
     steps:
       - name: Merge
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.pulls.merge({
