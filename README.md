@@ -44,3 +44,16 @@ The yaml sample above would set the following value in a json file:
 ### Outputs
 - None
 
+## Development Notes
+
+### Dependency overrides
+
+`package.json` includes an `overrides` entry for `undici` to force the patched version (`^6.25.0`). This resolves several security advisories (GHSA-g9mf-h72j-4rw9, GHSA-2mjp-6q6p-2qxm, GHSA-vrm6-8vpv-qv8q, GHSA-v9p9-hfj2-hcw8, GHSA-4992-7rv2-5pvq) that were present in the transitive dependency chain via `@actions/http-client`.
+
+### Releasing a new version
+
+Run the [release workflow](https://github.com/benday-inc/set-property-value-in-appsettings/actions/workflows/release.yml) manually from GitHub Actions, providing the new version number (e.g. `3.1.0`). The workflow will:
+1. Run the full build, lint, test, and package pipeline
+2. Bump the version in `package.json` and commit the updated `dist/` folder
+3. Push a versioned tag (e.g. `v3.1.0`) and update the floating major-version tag (e.g. `v3`)
+4. Create a GitHub Release
