@@ -2,14 +2,31 @@
 
 # Edit a property value in JSON file
 
+Written by Benjamin Day  
+Pluralsight Author | Microsoft MVP | Scrum.org Professional Scrum Trainer  
+https://www.benday.com  
+https://www.honestcheetah.com  
+info@benday.com  
+YouTube: https://www.youtube.com/@_benday  
+
+*Got ideas for GitHub Actions you'd like to see? Found a bug? Let us know by submitting an issue https://github.com/benday-inc/set-property-value-in-appsettings/issues. Want to contribute? Submit a pull request.*
+
 This action helps you to edit property values in a JSON file.  For example, if you're using .NET Core, you can use this action to edit your appsettings.json file.
+
+## What's new in v3
+
+- Action now runs on **Node 24** (was Node 20). Self-hosted runners must have Node 24 available; GitHub-hosted runners are unaffected.
+- Modernized dependencies: `@actions/core` 2.x, `jest` 30, `prettier` 3, `eslint` 9 (flat config), `@typescript-eslint` 8.
+- 0 npm vulnerabilities.
+
+**Migration:** consumers should switch from `uses: benday-inc/set-property-value-in-appsettings@v1` to `@v3`.
 
 ## Usage
 
 To edit a connection string inside of an appsettings.json file:  
 ```yaml
 - name: Edit property string value in appsettings.json
-  uses: benday-inc/set-property-value-in-appsettings@main
+  uses: benday-inc/set-property-value-in-appsettings@v3
   with:
     pathtosettingsfile: '${{ github.workspace }}/Benday.Demo123/src/Benday.Demo123.WebUi/appsettings.json'
     keyname1: 'level1'
