@@ -1,0 +1,70 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 3.0.0)'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build, lint, test, and package
+        run: npm run all
+
+      - name: Bump version in package.json
+        run: npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Commit dist and version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/ package.json package-lock.json
+          git commit -m "chore: release v${{ github.event.inputs.version }}"
+
+      - name: Create version tag
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          git tag "v${VERSION}"
+          git tag -f "v${MAJOR}"
+
+      - name: Push commits and tags
+        run: git push origin HEAD --tags --force
+
+      - name: Create GitHub Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ github.event.inputs.version }}';
+            const tag = `v${version}`;
+            const major = version.split('.')[0];
+
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `v${version}`,
+              body: `## What's Changed\n\nSee the [commit history](https://github.com/${context.repo.owner}/${context.repo.repo}/commits/${tag}) for details.`,
+              draft: false,
+              prerelease: false
+            });
+
+            core.notice(`Released v${version}. Floating tag v${major} updated.`);
